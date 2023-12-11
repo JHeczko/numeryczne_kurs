@@ -1,16 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import threading
 
 
 #Parametry, mozemy je zmieniac w zaleznosci od tego od jakiej do jakiej potegi chcemy podnosic dana liczba, albo zmienic punkt w obliczanej pochodnej, albo zmienic podstawe wykladnicza h
-type_val = "double" #typ ktory bedzie obslugiwany w calym programie "double" albo "float"
-dolny_range = -55
-gorny_range = -1
+type_val = "float" #typ ktory bedzie obslugiwany w calym programie "double" albo "float"
 
 if(type_val == "double"):
-    x_zmienna = np.float64(0.2)
+    x_zmienna = np.float64(1) #tutaj mozna zmienic x ktory bedzie w calym programie
 else:
-    x_zmienna = np.float32(0.2)
+    x_zmienna = np.float32(1)
 
 h_zmienna = 10 
 
@@ -24,7 +23,7 @@ def plot(arr_iloraz1, arr_iloraz2, arr_iloraz3, title,path):
     
 
     plt.xlabel("log^h") 
-    plt.ylabel("log^e - error") 
+    plt.ylabel("|log^e-error|") 
     
     plt.legend() 
     plt.savefig(path)
@@ -46,6 +45,9 @@ def plot_multiple(arr_iloraz1, arr_iloraz2, arr_iloraz3, title,path):
     plot1.set_title("Iloraz 1/A")
     plot2.set_title("Iloraz 2/B")
     plot3.set_title("Iloraz 3/C")
+
+    plt.xlabel("log^h") 
+    plt.ylabel("Error") 
 
     plot1.loglog(arr_iloraz1[0],arr_iloraz1[1], color="r")
     plot2.loglog(arr_iloraz2[0],arr_iloraz2[1], color="g")
@@ -77,16 +79,16 @@ def iloraz3(f,x,h):
 
 def funckja(x):
     if(type_val == "double"):
-        value = np.float64(np.sin(pow(x,2)))
+        value = np.float64(np.sin(x))
     else:
-        value = np.float32(np.sin(pow(x,2)))
+        value = np.float32(np.sin(x))
     return value
 
 def pochodna_funckji(x):
     if(type_val == "double"):
-        value = np.float64(2*x*np.cos(pow(x,2)))
+        value = np.float64(np.cos(x))
     else:
-        value = np.float32(2*x*np.cos(pow(x,2)))
+        value = np.float32(np.cos(x))
     return value
 
 def blad_przyblizenia(iloraz):

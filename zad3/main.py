@@ -1,71 +1,100 @@
-import math
-import random
+import time
 import numpy as np
-from numpy import linalg as LA
-
-zakresLosowania = np.float64(2/math.sqrt(5))
-
-def kreski():
-    print("-"*50)
-
-#Funckja generujaca losowy wektor o bardzo zblizonej normie 10^(-6)
-def generateErrorVector(vector):
-    flag = True
-    while(flag):
-        for i in range(1,6):
-            random_error = random.uniform(-zakresLosowania, zakresLosowania)
-            random_error *= pow(10,-6)
-            vector = np.append(vector, random_error)
-        if((pow(10, -6)/LA.norm(vector)) >= 0.99999 and (pow(10, -6)/LA.norm(vector)) <= 1.00001):
-            flag = False
-        else:
-            for j in range(1,6):
-                vector = np.delete(vector, 0)
-    return vector
-
-#Ustawienia parametrow z zadania
-macierzA = np.array([[ 2.554219275 , 0.871733993 , 0.052575899 , 0.240740262 , 0.316022841 ] ,
-                     [ 0.871733993 , 0.553460938 , -0.070921727 , 0.255463951 , 0.707334556 ] ,
-                     [ 0.052575899 , -0.070921727 , 3.409888776 , 0.293510439 , 0.847758171 ],
-                     [ 0.240740262 , 0.255463951 , 0.293510439 , 1.108336850 , -0.206925123 ],
-                     [0.316022841 , 0.707334556 , 0.847758171 , -0.206925123 , 2.374094162 ]], 
-                     np.float64)
-
-macierzB = np.array([
-                    [ 2.645152285 , 0.544589368 , 0.009976745 , 0.327869824 , 0.424193304 ],
-                    [ 0.544589368 , 1.730410927 , 0.082334875 , -0.057997220 , 0.318175706 ],
-                    [ 0.009976745 , 0.082334875 , 3.429845092 , 0.252693077 , 0.797083832],
-                    [ 0.327869824 , -0.057997220 , 0.252693077 , 1.191822050 , -0.103279098 ],
-                    [ 0.424193304 , 0.318175706 , 0.797083832 , -0.103279098 , 2.502769647 ]], 
-                    np.float64)
-
-wektorB = np.array([-0.642912346 , -1.408195475 , 4.595622394 , -5.073473196 , 2.178020609], np.float64)
-
-#Generowanie wektora zaburzeń
-wektorError = np.array([], np.float64)
-wektorError = generateErrorVector(wektorError)
-
-answearsMatrixA = LA.solve(macierzA, wektorB)
-answearsMatrixB = LA.solve(macierzB, wektorB)
-
-wektorB_zaburzony = np.add(wektorB, wektorError)
-
-answearsMatrixA_zaburzone = LA.solve(macierzA, wektorB_zaburzony)
-answearsMatrixB_zaburzone = LA.solve(macierzB, wektorB_zaburzony)
-
-differenceMacierzA = np.absolute(answearsMatrixA - answearsMatrixA_zaburzone)
-differenceMacierzB = np.absolute(answearsMatrixB - answearsMatrixB_zaburzone)
-
-kreski()
-print(f"\nMacierz A: {answearsMatrixA} \n\nZaburzona Macierz A: {answearsMatrixA_zaburzone}\n")
-kreski()
-print(f"\nMacierz B: {answearsMatrixB} \n\nZaburzona Macierz B: {answearsMatrixB_zaburzone}\n")
-kreski()
-print(f"\nTak wyglada roznica odpowiedzi odpowiednio:\n\nMacierzy A: {differenceMacierzA}\nMacierzy B: {differenceMacierzB}\n")
-kreski()
-print(f"\nKappa macierzy A: {LA.cond(macierzA)} \n\nKappa Macierzy B: {LA.cond(macierzB)}\n")
-kreski()
+import numpy.linalg as lg
+import matplotlib.pyplot as plt
 
 
+N_INPUT = 1000
+N = N_INPUT - 2
+h=0.01
+
+#PLOTTING
+def plot(arr_y,title = "Graficzne rozwiazanie"):
+    arr_x = np.array([i*h for i in range(0,N_INPUT)])
+    plt.title(title)
+    plt.grid(True)
+    plt.plot(arr_x,arr_y)
+    plt.show()
+
+#MAKING TRIDIAGONAL MATRIX
+def tridiag(a, b, c, k1=-1, k2=0, k3=1):
+    return np.diag(a, k1) + np.diag(b, k2) + np.diag(c, k3)
+
+#CLASSICAL THOMAS SOLVER
+def TDMA1(a,b,c,d):
+    n = len(d)
+    w= np.zeros(n-1,float)
+    g= np.zeros(n, float)
+    p = np.zeros(n,float)
+    
+    w[0] = c[0]/b[0]
+    g[0] = d[0]/b[0]
+
+    for i in range(1,n-1):
+        w[i] = c[i]/(b[i] - a[i-1]*w[i-1])
+    for i in range(1,n):
+        g[i] = (d[i] - a[i-1]*g[i-1])/(b[i] - a[i-1]*w[i-1])
+    p[n-1] = g[n-1]
+    for i in range(n-1,0,-1):
+        p[i-1] = g[i-1] - w[i-1]*p[i]
+    return p
+
+#THOMAS SOLVER MODIFIED
+def TDMA(a,b,c,d):
+    n = len(d)
+    w= np.zeros(n-1,np.float64)
+    g= np.zeros(n, np.float64)
+    p = np.zeros(n+2,np.float64)
+    p[0] = 1
+    p[n+1] = 0
+    w[0] = c[0]/b[0]
+    g[0] = d[0]/b[0]
+    for i in range(1,n-1):
+        w[i] = c[i]/(b[i] - a[i-1]*w[i-1])
+    for i in range(1,n):
+        g[i] = (d[i] - a[i-1]*g[i-1])/(b[i] - a[i-1]*w[i-1])
+    p[n] = g[n-1]
+    for i in range(n-1,0,-1):
+        p[i] = g[i-1] - w[i-1]*p[i+1]
+    return p
+
+#setup for thomas
+a = np.ones(N-1, np.float64)
+b = np.array([(h*h)-2 for i in range(0,N)],np.float64)
+c = np.ones(N-1,np.float64)
+d = np.zeros(N,np.float64)
+d[0] = -1
+
+#setup for matrix
+a1 = np.ones(N_INPUT-1,np.float64)
+a1[N_INPUT-2] = 0
+b1 = np.array([(h*h)-2 for i in range(0,N_INPUT)],np.float64)
+b1[N_INPUT-1] = 1
+b1[0] = 1
+c1 = np.ones(N_INPUT-1,np.float64)
+c1[0] = 0
+d1 = np.zeros(N_INPUT)
+d1[0] = 1
+
+matrixA = tridiag(a1,b1,c1)
 
 
+#measure time for thomas
+start = time.time()
+y_thomas = TDMA(a,b,c,d)
+end = time.time()
+value = end - start
+
+#measure time for LU
+start1 = time.time()
+y_lu = lg.solve(matrixA,d1)
+end1 = time.time()
+value1 = end1 - start1
+
+#PRINTING AND PLOTTING
+print(f"Solved matrixA with numpy no efficent with time: {value1}:\n")
+print(f"Solved matrixA with thomas algorithm in time: {value}:\n")
+print(f"Porownanie wzgledne czasu LU do czasu thomasa:\n{np.float64(value1/value)}")
+plot(y_thomas)
+plot(y_lu)
+print(y_thomas)
