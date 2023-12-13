@@ -1,0 +1,135 @@
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\graphicspath{ {./images} }
+
+
+\title{Zadanie numeryczne 5}
+\author{Jakub Heczko}
+\date{}
+
+\begin{document}
+\section{Wstęp:}
+Głównym problemem zadania jest znalezienie optymalnego algorytmu do rozwiazania naszego układu rownań, który posiada lekką modyfikację w lewym dolnym rogu, a dokladnie w 1,2,3 miejscu w ostatnim wierszu, co sprawia, że w przeciwieństwie do pierwszego zadania, nie możemy od razu rozwiązać układu algorytmem thomasa.
+\section{Optymalizacja:}
+Aby móc optymalnie rozwiązać nasz układ należy odjąć pierwszy wiersz od ostatniego, w ten sposób wyzerujemy element w rogu, którego współrzędne to [N][N]. Należy również zrobić to co poprzednio czyli, przemnożyc całe wyrażenie $D_{2h}$ przez $h^{2}$, dostajemy wiec:
+\newline
+\begin{center}
+    $D_{2h} = y_{n-1} - (h^{2} - 2)y_{n} + y_{n+1}$
+\end{center}
+Macierz będzie wyglądać w ten sposób i bedzie miała rozmiar N+1 na N+1:
+\[
+\begin{bmatrix}
+    1 & 0 & 0 & 0 & 0 & \dots & 0\\
+    1 & h^{2}-2 & 1 & 0 & 0 & \dots & 0\\ 
+    0 & 1 & h^{2}-2 & 1 & 0 & \dots & 0\\
+    0 & 0 & 1 & h^{2}-2 & 1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & 1 & h^{2} & 1\\
+    1 & 0 & 0 & \hdots & 0 & 1 & -2
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{0}\\
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    \vdots\\
+    y_{n-1}\\
+    y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    0
+\end{bmatrix}
+\]
+Następnie po odjęciu wierszy dostajemy: 
+\[
+\begin{bmatrix}
+    1 & 0 & 0 & 0 & 0 & \dots & 0\\
+    1 & h^{2}-2 & 1 & 0 & 0 & \dots & 0\\ 
+    0 & 1 & h^{2}-2 & 1 & 0 & \dots & 0\\
+    0 & 0 & 1 & h^{2}-2 & 1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & 1 & h^{2}-2 & 1\\
+    0 & 0 & 0 & \hdots & 0 & 1 & -2
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{0}\\
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    \vdots\\
+    y_{n-1}\\
+    y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    -1
+\end{bmatrix}
+\]
+Tak zooptymalizowany układ można rozwiązać algorytmem thomasa.
+
+\section{Uzasadnienie wyboru algorytmu:}
+
+Jak mozna poprostu zauwazyc dostajemy macierz trojdiagonalna po optymalizacji, ktora na potrzeby zadania zapisze w 3 osobnych wektorach, jeden wektor bedzie wielkosci N i bedzie reprezentowal wartości pod diagonalą, drugi wielkosci N+1 i bedzie reprezentowal wartosci diagonalne, a trzeci podobnie jak pierwszy wielkosci N-1 i bedzie reprezentowal wartodic nad doagonala. Teraz aby optymalnie obloczyc rozwoazanoa macierzy trojdiagonalnej nalezy zastosowac algorytm thomasa, ktory daje rozwiazanie w czasie O(n).
+\begin{center}
+W ogólności zapiszmy nad układ jako:
+$a_{i}x{i-1} + b_{i}x{i} + c_{i}x{i+1} = d_{i}$ dla $i = 1,2,...,n$
+\end{center}
+Przy czym $a_{0} = 0$ oraz $c_{n} = 0$ czyli tak naprawde nasze skrocone wektory
+Teraz załóżmy, że nasze rozwiązania można przedstawić w następujący sposób:
+\begin{center}
+$x_{i} = -w_{i}x_{i+1} + g_{i}$
+\end{center}
+A to mozna przeindeksować:
+\begin{center}
+$x_{i-1} = -w_{i-1}x_{i} + g_{i-1}$
+\end{center}
+Po odpowiednich podstawieniach pod nasze ogólne rozwiazanie $x_{i}$, dostaniemy:
+\begin{center}
+$w_{i} = \frac{c_{i}}{a_{i}w_{i-1}+b_{i}}$\newline\newline
+$g_{i} = \frac{d_{i}-a_{i}w_{i-1}}{a_{i}w{i-1}+b_{i}}$\newline\newline
+To będzie zachodzić dla $i=2,3,...,n$.
+Wiemy również, że:\newline\newline
+$w_{1} = \frac{c{1}}{b_{1}}$ ,
+$g_{1} = \frac{d{1}}{b_{1}}$
+\end{center}
+Na samym końcu naszego algorytmu trzeba jeszcze uwzlędnić krok dla n, czyli:
+\begin{center}
+$x_{n} = g_{n}$
+\end{center}
+Teraz rozwiązaliśmy nasz układ w przód, musimy się jeszcze cofnąć i go rozwiązać z naszej pierwszej własności 
+\begin{center}
+$x_{i} = w_{i}x_{i+1}+w_{i}$ dla $i = n-1, n-2,...,1$
+\end{center}
+
+
+Dokladna pesymistyczna zlozonosc to O(3N)
+\section{Omówienie wyników:}
+Jak dalej mozna zauwazyć zmierzylem czas i względne porownanałem dla bardzo duzych danych te dwie wartości, przykładowe wyniki przedstawiam na dole:
+\begin{center}
+    Solved matrixA with numpy no efficent with time: 0.024635791778564453:
+    \newline\newline
+    Solved matrixA with thomas algorithm in time: 0.0011420249938964844:
+    \newline\newline
+    Porownanie wzgledne czasu LU do czasu thomasa: 21.572025052192068
+\end{center}
+\end{document}

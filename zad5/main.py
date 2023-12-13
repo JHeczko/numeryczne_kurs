@@ -43,7 +43,7 @@ def morison_Solve(down_diag, diag, up_diag, b, u, v):
     x = z - (np.float64(y*np.dot(v,z))/np.float64(1+(np.dot(v,y))))
     return x
 
-#setup for morison
+#setup for matrixA from morison
 matrixA_down_diag = np.ones(N-1,np.float64)
 matrixA_down_diag[N-2] = 0
 
@@ -57,8 +57,7 @@ matrixA_up_diag[0] = 0
 d = np.zeros(N, np.float64)
 d[0] = 1
 
-
-#Morison setup
+#Morison vectors setup
 u = np.zeros(N,np.float64)
 u[N-1] = 1
 
@@ -84,6 +83,6 @@ y_lu = np.linalg.solve(matrixA,d)
 end1 = time.time()
 
 #Solving and plotting
-print(f"Czas rozwiazanie thomasem i wzorem shermana morisona: {end-start}\nCzas rozwazania zswyklym rozkladem LU przy uzyciu numpy: {end1-start1}\nWzglednie porównanie LU do morisona: {(end1-start1)/(end-start)}")
-plot(y_morison)
-plot(y_lu)
+print(f"Czas rozwiazanie thomasem i wzorem shermana morisona: {end-start}\n\nCzas rozwazania zswyklym rozkladem LU przy uzyciu numpy: {end1-start1}\n\nWzglednie porównanie LU do morisona: {(end1-start1)/(end-start)}")
+plot(y_morison,"Morison + Thomas")
+plot(y_lu, "LU")

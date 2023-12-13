@@ -55,6 +55,8 @@ start_thom = time.time()
 y_thomas = TDMA(a,b,c,d)
 end_thom = time.time()
 
+print(matrixA)
+
 start_lu = time.time()
 y_lu = lg.solve(matrixA, d_matrix)
 end_lu = time.time()
