@@ -6,11 +6,13 @@ N = 1000
 h = 0.01
 
 #PLOT FUNCTION
-def plot(arr_y,title = "Graficzne rozwiazanie"):
+def plot(arr_y,arr_y1,title = "Graficzne rozwiazanie"):
     arr_x = np.array([i*h for i in range(0,N)])
     plt.title(title)
     plt.grid(True)
+    plt.plot(arr_x,arr_y1)
     plt.plot(arr_x,arr_y)
+    plt.legend(["LU","Morison+Thomas"])
     plt.show()
 
 #CREATE TRIDIAGONAL MATRIX
@@ -20,21 +22,21 @@ def tridiag(matrixA_down_diag, matrixA_diag, matrixA_up_diag, k1=-1, k2=0, k3=1)
 #CLASSIC THOMAS SOLVER
 def TDMA(a,b,c,d):
     n = len(d)
-    w= np.zeros(n-1,np.float64)
-    g= np.zeros(n, np.float64)
-    p = np.zeros(n,np.float64)
+    beta= np.zeros(n,float)
+    gamma= np.zeros(n, float)
+    x = np.zeros(n,float)
     
-    w[0] = c[0]/b[0]
-    g[0] = d[0]/b[0]
+    beta[0] = -c[0]/b[0]
+    gamma[0] = d[0]/b[0]
 
     for i in range(1,n-1):
-        w[i] = c[i]/(b[i] - a[i-1]*w[i-1])
+        beta[i] = -(c[i]/(b[i] + a[i-1]*beta[i-1]))
     for i in range(1,n):
-        g[i] = (d[i] - a[i-1]*g[i-1])/(b[i] - a[i-1]*w[i-1])
-    p[n-1] = g[n-1]
-    for i in range(n-1,0,-1):
-        p[i-1] = g[i-1] - w[i-1]*p[i]
-    return p
+        gamma[i] = (d[i] - a[i-1]*gamma[i-1])/(b[i] + a[i-1]*beta[i-1])
+    x[n-1] = gamma[n-1]
+    for i in range(n-2,-1,-1):
+        x[i] = gamma[i] + beta[i]*x[i+1]
+    return x
 
 #MORISON SOLVER WITH THOMAS
 def morison_Solve(down_diag, diag, up_diag, b, u, v):
@@ -43,7 +45,7 @@ def morison_Solve(down_diag, diag, up_diag, b, u, v):
     x = z - (np.float64(y*np.dot(v,z))/np.float64(1+(np.dot(v,y))))
     return x
 
-#setup for matrixA from morison
+#setup for matrixA for morison
 matrixA_down_diag = np.ones(N-1,np.float64)
 matrixA_down_diag[N-2] = 0
 
@@ -84,5 +86,4 @@ end1 = time.time()
 
 #Solving and plotting
 print(f"Czas rozwiazanie thomasem i wzorem shermana morisona: {end-start}\n\nCzas rozwazania zswyklym rozkladem LU przy uzyciu numpy: {end1-start1}\n\nWzglednie porównanie LU do morisona: {(end1-start1)/(end-start)}")
-plot(y_morison,"Morison + Thomas")
-plot(y_lu, "LU")
+plot(y_morison,y_lu,"Morison + Thomas, LU")
