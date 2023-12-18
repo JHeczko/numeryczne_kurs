@@ -4,6 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{graphicx}
 
 \graphicspath{ {./images} }
 
@@ -92,7 +93,7 @@ Na początku przedstawie, jak analitycznie wygląda algorytm, dopiero w podsekcj
 Jak mozna poprostu zauwazyc dostajemy macierz trojdiagonalna, ktora na potrzeby zadania zapisze w 3 osobnych wektorach, jeden wektor bedzie wielkosci N i bedzie reprezentowal wartości pod diagonalą, drugi wielkosci N+1 i bedzie reprezentowal wartosci diagonalne, a trzeci podobnie jak pierwszy wielkosci N-1 i bedzie reprezentowal wartodic nad doagonala. Teraz aby optymalnie obloczyc rozwoazanoa macierzy trojdiagonalnej nalezy zastosowac algorytm thomasa, ktory daje rozwiazanie w czasie O(n).
 \begin{center}
 W ogólności zapiszmy nad układ jako:
-$a_{i}x{i-1} + b_{i}x{i} + c_{i}x{i+1} = d_{i}$ dla $i = 1,2,...,n$
+$a_{i}x_{i-1} + b_{i}x_{i} + c_{i}x_{i+1} = d_{i}$ dla $i = 1,2,...,n$
 \end{center}
 Przy czym $a_{0} = 0$ oraz $c_{n} = 0$ czyli tak naprawde nasze skrocone wektory. Będziemy musieli póżniej uwzględnić to założenie przy naszych obliczeniach zmieniając indeksy:
 Teraz załóżmy, że nasze rozwiązania można przedstawić w następujący sposób:
@@ -146,6 +147,7 @@ Solved matrixA with thomas algorithm in time: 0.0011038780212402344
 \newline
 Porownanie wzgledne czasu LU do czasu thomasa:
 17.676889848812095
+\includegraphics[width=13cm,height=8cm, keepaspectratio]{wykres}
 \end{center}
 
 \end{document}

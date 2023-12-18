@@ -2,8 +2,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[polish]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{graphicx}
 
 \graphicspath{ {./images} }
 
@@ -14,7 +14,7 @@
 
 \begin{document}
 \section{Wstęp:}
-Głownym problemem zadania jest znalezienie optymalnego algorytmu do rozwiazania naszego ukladu rownan, który posiada jedynke w dolnym lewym rogu, co sprawia, że w przeciwieństwie do pierwszego zadania, nie możemy od razu rozwiązać układu algorytmem thomasa.Plus muszę trochę wyjaśnić syntaxę, w algorytmach, będę zakładał, że macierż jest rozmiaru N, ale na grafikach macerzy, że jest rozmiaru N+1, ale jeśli mówie, że iteruję od 0 aż do n-1 elementu to mam na myśli oczywiście dla n dużej tablicy, że iteruje od początku do końca.
+Głownym problemem zadania jest znalezienie optymalnego algorytmu do rozwiazania naszego ukladu rownan, który posiada jedynke w dolnym lewym rogu, co sprawia, że w przeciwieństwie do pierwszego zadania, nie możemy od razu rozwiązać układu algorytmem thomasa.Plus muszę trochę wyjaśnić syntaxę, w algorytmach, będę zakładał, że macierż jest rozmiaru N, ale na grafikach macierzy, że jest rozmiaru N+1, ale jeśli mówie, że iteruję od 0 aż do n-1 elementu to mam na myśli oczywiście dla n dużej tablicy, że iteruje od początku do końca.
 \section{Optymalizacja:}
 Aby móc optymalnie rozwiązać nasz układ należy odjąć pierwszy wiersz od ostatniego, w ten sposób wyzerujemy element w rogu, którego współrzędne to [N][N]. Należy również zrobić to co poprzednio czyli, przemnożyc całe wyrażenie $D_{2h}$ przez $h^{2}$, dostajemy wiec, z uwzględnieniem tego co ma być już wpisane w konkretne wiersze macierzy:
 \newline
@@ -92,7 +92,7 @@ Na początku przedstawie, jak analitycznie wygląda algorytm, dopiero w podsekcj
 Jak mozna poprostu zauwazyc dostajemy macierz trojdiagonalna, ktora na potrzeby zadania zapisze w 3 osobnych wektorach, jeden wektor bedzie wielkosci N i bedzie reprezentowal wartości pod diagonalą, drugi wielkosci N+1 i bedzie reprezentowal wartosci diagonalne, a trzeci podobnie jak pierwszy wielkosci N-1 i bedzie reprezentowal wartodic nad doagonala. Teraz aby optymalnie obloczyc rozwoazanoa macierzy trojdiagonalnej nalezy zastosowac algorytm thomasa, ktory daje rozwiazanie w czasie O(n).
 \begin{center}
 W ogólności zapiszmy nad układ jako:
-$a_{i}x{i-1} + b_{i}x{i} + c_{i}x{i+1} = d_{i}$ dla $i = 1,2,...,n$
+$a_{i}x_{i-1} + b_{i}x_{i} + c_{i}x_{i+1} = d_{i}$ dla $i = 1,2,...,n$
 \end{center}
 Przy czym $a_{0} = 0$ oraz $c_{n} = 0$ czyli tak naprawde nasze skrocone wektory. Będziemy musieli póżniej uwzględnić to założenie przy naszych obliczeniach zmieniając indeksy:
 Teraz załóżmy, że nasze rozwiązania można przedstawić w następujący sposób:
@@ -143,5 +143,6 @@ Jak dalej mozna zauwazyć zmierzylem czas i względne porownanałem dla bardzo d
     \newline\newline
     Porownanie wzgledne czasu LU do czasu thomasa: 21.572025052192068
 \end{center}
+\includegraphics[width=13cm,height=8cm, keepaspectratio]{wykres}
 
 \end{document}

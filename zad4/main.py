@@ -64,6 +64,8 @@ start_lu = time.time()
 y_lu = lg.solve(matrixA, d_matrix)
 end_lu = time.time()
 
+print(y_thomas)
+
 print(f"Solved matrixA with numpy no efficent with time {end_lu-start_lu}:\n")
 print(f"Solved matrixA with thomas algorithm in time{end_thom-start_thom}:\n")
 print(f"Porownanie wzgledne czasu LU do czasu thomasa:\n{np.float64((end_lu-start_lu)/(end_thom-start_thom))}")
