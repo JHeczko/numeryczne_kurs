@@ -2,8 +2,8 @@ import numpy as np
 import time as time
 
 #Parameters
-N = 8
-powh2 = np.float64(0.0001)
+N = 5
+H = np.float64(0.0001)+2
 iteration = 0
 error = 1e-10
 
@@ -23,28 +23,6 @@ def TriDot(A,b):
         out[i] = under[i-1]*b[i-1] + diag[i]*b[i] + up[i]*b[i+1]
     return out
 
-#Thomas Solver
-def TDMA(A,d):
-    a = A[0]
-    b = A[1]
-    c = A[2]
-    n = len(d)
-    beta= np.zeros(n,float)
-    gamma= np.zeros(n, float)
-    x = np.zeros(n,float)
-    
-    beta[0] = -c[0]/b[0]
-    gamma[0] = d[0]/b[0]
-
-    for i in range(1,n-1):
-        beta[i] = -(c[i]/(b[i] + a[i-1]*beta[i-1]))
-    for i in range(1,n):
-        gamma[i] = (d[i] - a[i-1]*gamma[i-1])/(b[i] + a[i-1]*beta[i-1])
-    x[n-1] = gamma[n-1]
-    for i in range(n-2,-1,-1):
-        x[i] = gamma[i] + beta[i]*x[i+1]
-    return x
-
 #Jacobi
 def Jacobi(D,R,b,xn):
     xn1 = TriDot(D,(b-TriDot(R,xn)))
@@ -52,7 +30,7 @@ def Jacobi(D,R,b,xn):
 
 #Init Symetryczna-Dodatnio Okreslona
 a = np.ones(N-1,np.float64)
-b = np.array([(powh2+2) for i in range(0,N)],np.float64)
+b = np.array([H for i in range(0,N)],np.float64)
 c = np.ones(N-1,np.float64)
 d = np.zeros(N,np.float64)
 d[0] = 1
@@ -65,14 +43,16 @@ D_Inverse = [np.zeros(N-1), 1/b, np.zeros(N-1)]
 print(np.linalg.solve(TriDiag(a,b,c),d))
 
 #Iteracja
+xnhelp = np.ones(N)
 xn=np.zeros(N)
 while(True):
     xn1 = Jacobi(D_Inverse,R,d,xn)
-    if(iteration == 300):
+    if((np.abs(max(xnhelp) - max(xn1)) < 1e-10)):
         print(iteration)
         print(xn1)
         break
     else:
         iteration += 1
+        xnhelp = xn
         xn = xn1
 

@@ -5,7 +5,7 @@ import time as time
 #Parameters
 N = 8
 error = 1e-10
-powh2 = np.float64(0.0001)
+H = np.float64(0.0001)+2
 gamma = 1/2
 iteration = 0
 
@@ -33,7 +33,7 @@ def Richardson(matrixA,d,xn):
 
 #Init Symetryczna-Dodatnio Okreslona
 a = np.ones(N-1,np.float64)
-b = np.array([powh2+2 for i in range(0,N)],np.float64)
+b = np.array([H for i in range(0,N)],np.float64)
 c = np.ones(N-1,np.float64)
 d = np.zeros(N,np.float64)
 d[0] = 1
