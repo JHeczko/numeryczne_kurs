@@ -3,10 +3,12 @@ import numpy as np
 import time as time
 
 #Parameters
-N = 6
-H = np.float64(0.0001)+2
+N_given = 100
+N = N_given - 2 #Bo mamy juz dwa pierwsze rozwiazania!!!
+H = np.float64(1e-4)-2
 iteration = 0
 gamma = 1/3
+wypisz = 1
 error = 1e-10
 
 #Help function
@@ -44,7 +46,7 @@ a = np.ones(N-1,np.float64)
 b = np.array([H for i in range(0,N)],np.float64)
 c = np.ones(N-1,np.float64)
 d = np.zeros(N,np.float64)
-d[0] = 1
+d[0] = -1
 
 #Gamma Setup
 mi = max(lg.eig(np.diag(np.ones(N)) - np.diag(b).dot(TriDiag(a,b,c))).eigenvalues)
@@ -53,16 +55,16 @@ gamma = 1 + ((mi)/(1 + np.sqrt(1 - (mi*mi))))*((mi)/(1 + np.sqrt(1-(mi*mi))))
 #Setup for A-Matrix
 A = TriDiag(a,b,c)
 
-#Porownanie
-print(np.linalg.solve(A,d))
-
 #Iteracja
 xn=np.zeros(N)
 while(True):
     xn1 = OverRelaxation(A,d,xn)
-    if(np.abs(max(xn1) - max(xn)) < 1e-10):
-        print(iteration)
-        print(xn1)
+    if(lg.norm(xn1-xn)< 1e-10):
+        if(wypisz):
+            print(TriDiag(a,b,c))
+            print(xn1)
+            print(lg.solve(TriDiag(a,b,c),d))
+        print(f"Liczba iteracji: {iteration}")
         break
     else:
         iteration += 1

@@ -1,11 +1,14 @@
 import numpy as np
+import numpy.linalg as lg
 import time as time
 
 #Parameters
-N = 5
-H = np.float64(0.0001)+2
-iteration = 0
+N_given = 100
+N = N_given - 2 #Bo mamy juz dwa pierwsze rozwiazania!!!
+H = np.float64(1e-4)-2
 error = 1e-10
+wypisz = 1
+iteration = 0
 
 #Make Tridiagonal Matrix
 def TriDiag(a,b,c):
@@ -33,23 +36,23 @@ a = np.ones(N-1,np.float64)
 b = np.array([H for i in range(0,N)],np.float64)
 c = np.ones(N-1,np.float64)
 d = np.zeros(N,np.float64)
-d[0] = 1
+d[0] = -1
 
 #Setup for Rest-Matrix and D_Inverse-Matrix
 R = [a,np.zeros(N),c]
 D_Inverse = [np.zeros(N-1), 1/b, np.zeros(N-1)]
-
-#Porownainie
-print(np.linalg.solve(TriDiag(a,b,c),d))
 
 #Iteracja
 xnhelp = np.ones(N)
 xn=np.zeros(N)
 while(True):
     xn1 = Jacobi(D_Inverse,R,d,xn)
-    if((np.abs(max(xnhelp) - max(xn1)) < 1e-10)):
-        print(iteration)
-        print(xn1)
+    if(lg.norm(xn1-xnhelp)< 1e-10):
+        if(wypisz):
+            print(TriDiag(a,b,c))
+            print(xn1)
+            print(lg.solve(TriDiag(a,b,c),d))
+        print(f"Liczba iteracji: {iteration}")
         break
     else:
         iteration += 1

@@ -1,10 +1,13 @@
 import numpy as np
+import numpy.linalg as lg
 import time as time
 
 #Parameters
-N = 8
-H = np.float64(0.0001)+2
+N_given = 100
+N = N_given - 2 #Bo mamy juz dwa pierwsze rozwiazania!!!
+H = np.float64(1e-4)-2
 iteration = 0
+wypisz = 1
 error = 1e-10
 
 #Help function
@@ -56,26 +59,24 @@ a = np.ones(N-1,np.float64)
 b = np.array([H for i in range(0,N)],np.float64)
 c = np.ones(N-1,np.float64)
 d = np.zeros(N,np.float64)
-d[0] = 1
+d[0] = -1
 
 #LowerWithDiagonal-Matrix and UpperNoDiagonal-Matrix
 U = [np.zeros(N-1,np.float64), np.zeros(N,np.float64), c]
 L = [a,b,np.zeros(N-1,np.float64)]
 
-#Porownanie
-print(np.linalg.solve(TriDiag(a,b,c),d))
-
 #Iteracje
 xn=np.zeros(N)
 while(True):
     xn1 = GausSeidel(L,U,d,xn)
-    if(np.abs(max(xn1) - max(xn)) < 1e-10):
-        print(iteration)
-        print(xn1)
+    if(lg.norm(xn1-xn)< 1e-10):
+        if(wypisz):
+            print(TriDiag(a,b,c))
+            print(xn1)
+            print(lg.solve(TriDiag(a,b,c),d))
+        print(f"Liczba iteracji: {iteration}")
         break
     else:
-        print(xn)
-        time.sleep(1)
         iteration += 1
         xn = xn1
 
