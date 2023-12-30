@@ -2,10 +2,10 @@ import numpy as np
 import numpy.linalg as lg
 
 #Parametry
-N_given = 20
+N_given = 100
 N = N_given - 2
 error = np.float64(1e-10)
-H = np.float64(1e-4)+2
+H = np.float64(1e-4)-2
 
 #Make TriDiagonal matrix for numpy
 def TriDiag(a,b,c):
@@ -30,7 +30,8 @@ def gradientSprzerzony(A,b):
     xn1 = np.zeros(N) 
     rn1 = np.zeros(N) 
     pn1 = np.zeros(N) 
-    global iteracje; iteracje = 0
+    global iteracje
+    iteracje = 0
     while(lg.norm(rn) > error):
         alpha = rn.dot(rn)/pn.dot(A.dot(pn))
         rn1 = rn - alpha*A.dot(pn)
@@ -44,9 +45,9 @@ def gradientSprzerzony(A,b):
     return xn
 
 #Macierz innit
-a = np.array([-1 for i in range(0,N-1)])
+a = np.array([1 for i in range(0,N-1)])
 b = np.array([H for i in range(0,N)])
-c = np.array([-1 for i in range(0,N-1)])
+c = np.array([1 for i in range(0,N-1)])
 d = np.zeros(N)
 d[0] = 1
 matrixA = TriDiag(a,b,c)
@@ -58,5 +59,7 @@ matrixD1 = TriDiag(np.zeros(N-1),D1,np.zeros(N-1))
 matrixD2 = TriDiag(np.zeros(N-1),D2,np.zeros(N-1))
 
 #Rozwiazanie
-print(lg.solve(matrixA,d))
-print(preconditioningSolve(matrixA, matrixD1, matrixD2, d, gradientSprzerzony))
+print(f"MatrixA is positive definied: {isPositiveDefined(matrixA)}")
+print(f"Norm of vector using numpy: {lg.norm(lg.solve(matrixA,d))}")
+print(f"Norm of vector using conqurence gradients: {lg.norm(preconditioningSolve(matrixA, matrixD1, matrixD2, d, gradientSprzerzony))}")
+print(f"Ilosc iteracji: {iteracje}")
