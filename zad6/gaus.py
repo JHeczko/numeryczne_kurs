@@ -3,11 +3,9 @@ import numpy.linalg as lg
 import time as time
 
 #Parameters
-N_given = 100
-N = N_given - 2 #Bo mamy juz dwa pierwsze rozwiazania!!!
-H = np.float64(1e-4)-2
-iteration = 0
-wypisz = 1
+N_given = 1000
+N = N_given - 1 #Bo mamy juz dwa pierwsze rozwiazania!!!
+H = np.float64(1e-4)+2
 error = 1e-10
 
 #Help function
@@ -49,34 +47,33 @@ def TDMA(A,d):
     return x
 
 #Gaus-Seidle
-def GausSeidel(L,U,b,xn):
-    newb = b - TriDot(U,xn)
-    xn1 = TDMA(L,newb)
-    return xn1
+def GausSeidel(L,U,b):
+    iteration = 0
+    xn=np.zeros(N)
+    while(True):
+        newb = b - TriDot(U,xn)
+        xn1 = TDMA(L,newb)
+        if(lg.norm(xn1-xn) < 1e-10):
+            print(f"Norma dla Gaus: {lg.norm(xn1)}")
+            print(f"Liczba iteracji Gaus: {iteration}")
+            return xn1
+        else:
+            iteration += 1
+            xn = xn1
 
 #Init Symetryczna-Dodatnio Okreslona
-a = np.ones(N-1,np.float64)
+a = np.array([-1 for i in range(0,N-1)])
 b = np.array([H for i in range(0,N)],np.float64)
-c = np.ones(N-1,np.float64)
+b[N-1] = 2
+c = np.array([-1 for i in range(0,N-1)])
 d = np.zeros(N,np.float64)
-d[0] = -1
+d[0] = 1
+d[N-1] = 1
 
 #LowerWithDiagonal-Matrix and UpperNoDiagonal-Matrix
 U = [np.zeros(N-1,np.float64), np.zeros(N,np.float64), c]
 L = [a,b,np.zeros(N-1,np.float64)]
 
 #Iteracje
-xn=np.zeros(N)
-while(True):
-    xn1 = GausSeidel(L,U,d,xn)
-    if(lg.norm(xn1-xn)< 1e-10):
-        if(wypisz):
-            print(TriDiag(a,b,c))
-            print(xn1)
-            print(lg.solve(TriDiag(a,b,c),d))
-        print(f"Liczba iteracji: {iteration}")
-        break
-    else:
-        iteration += 1
-        xn = xn1
-
+print(f"Norma dla numpy: {lg.norm(lg.solve(TriDiag(a,b,c),d))}")
+GausSeidel(L,U,d)

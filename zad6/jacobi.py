@@ -3,12 +3,10 @@ import numpy.linalg as lg
 import time as time
 
 #Parameters
-N_given = 100
-N = N_given - 2 #Bo mamy juz dwa pierwsze rozwiazania!!!
-H = np.float64(1e-4)-2
+N_given = 1000
+N = N_given - 1 #Bo mamy juz dwa pierwsze rozwiazania!!!
+H = np.float64(1e-4)+2
 error = 1e-10
-wypisz = 1
-iteration = 0
 
 #Make Tridiagonal Matrix
 def TriDiag(a,b,c):
@@ -27,35 +25,33 @@ def TriDot(A,b):
     return out
 
 #Jacobi
-def Jacobi(D,R,b,xn):
-    xn1 = TriDot(D,(b-TriDot(R,xn)))
-    return xn1
+def Jacobi(D,R,b):
+    iteration = 0
+    xn=np.zeros(N)
+    while(True):
+        xn1 = TriDot(D,(b-TriDot(R,xn))) # Tutaj jest funckja cala
+        if(lg.norm(xn1-xn)< 1e-10):
+            print(f"Norma dla Jacobi: {lg.norm(xn1)}")
+            print(f"Liczba iteracji Jacobi: {iteration}")
+            return xn1
+        else:
+            iteration += 1
+            xn = xn1
 
-#Init Symetryczna-Dodatnio Okreslona
-a = np.ones(N-1,np.float64)
+#Init
+a = np.array([-1 for i in range(0,N-1)])
 b = np.array([H for i in range(0,N)],np.float64)
-c = np.ones(N-1,np.float64)
+b[N-1] = 2
+c = np.array([-1 for i in range(0,N-1)])
 d = np.zeros(N,np.float64)
-d[0] = -1
+d[0] = 1
+d[N-1] = 1
 
 #Setup for Rest-Matrix and D_Inverse-Matrix
 R = [a,np.zeros(N),c]
 D_Inverse = [np.zeros(N-1), 1/b, np.zeros(N-1)]
 
 #Iteracja
-xnhelp = np.ones(N)
-xn=np.zeros(N)
-while(True):
-    xn1 = Jacobi(D_Inverse,R,d,xn)
-    if(lg.norm(xn1-xnhelp)< 1e-10):
-        if(wypisz):
-            print(TriDiag(a,b,c))
-            print(xn1)
-            print(lg.solve(TriDiag(a,b,c),d))
-        print(f"Liczba iteracji: {iteration}")
-        break
-    else:
-        iteration += 1
-        xnhelp = xn
-        xn = xn1
+print(f"Norma dla numpy: {lg.norm(lg.solve(TriDiag(a,b,c),d))}")
+Jacobi(D_Inverse,R,d)
 

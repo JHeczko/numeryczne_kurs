@@ -1,0 +1,192 @@
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+
+\graphicspath{ {./images} }
+
+\begin{document}
+
+\section{Tutorial:}
+Na górze, każdego programu, są parametry, takie jak błąd, który można ustawić, albo wielkośc macierzy (Ngiven) oraz możemy wybrać parametry dla metody Richardsona oraz OverRelaxation. 
+\section{Omowienie problemów w zadaniu:}
+Zacznę od tego co było problemem w macierzy, która była podana w poleceniu. Albowiem nie była ona ani symetryczna, ani diagonalnie dominująca, ani dodatnio określona. Z definicji poszczególnych metod iteracyjnych, wiemy, że metoda Jacobiego, wymaga macierzy silnie dominującej, za to pozostałe metody do warunku zbieżności wymagają, aby macierz była dodatnio określona oraz symetryczna. Owa macierz wygląda tak:
+\[
+\begin{bmatrix}
+    1 & 0 & 0 & 0 & 0 & \dots & 0\\
+    1 & h^{2}-2 & 1 & 0 & 0 & \dots & 0\\ 
+    0 & 1 & h^{2}-2 & 1 & 0 & \dots & 0\\
+    0 & 0 & 1 & h^{2}-2 & 1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & 1 & h^{2}-2 & 1\\
+    0 & 0 & 0 & \hdots & 0 & 0 & 1
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{0}\\
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    \vdots\\
+    y_{n-1}\\
+    y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    0
+\end{bmatrix}
+\]
+Będzie ona rozmiaru N+1 x N+1. Naprawa, braku symetryczności jest dosyć prosta, bo wystarczy od przedostaniego i drugiego wiersza odjąć odpowiednio ostatni i pierwszy wiersz. Wtedy nasza macierz do rozwiązania będzie o dwa wymiary mniejsza i w dodatku symetryczna, te ucięte wiersze należy poprostu dodać na końcu do wyników, czyli na pierwszej i odpowiednio ostatnej pozycji wektora rozwiązań wstawić jedynkę i zero. Ale po przekształceniu dostaniemy taką macierz o wymiarach N-1 x N-1:
+\[
+\begin{bmatrix}
+    h^{2}-2 & 1 & 0 & 0 & 0 & \dots & 0\\
+    1 & h^{2}-2 & 1 & 0 & 0 & \dots & 0\\ 
+    0 & 1 & h^{2}-2 & 1 & 0 & \dots & 0\\
+    0 & 0 & 1 & h^{2}-2 & 1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & 1 & h^{2} & 1\\
+    0 & 0 & 0 & \hdots & 0 & 1 & h^{2}
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    y_{4}\\
+    \vdots\\
+    y_{n-2}\\
+    y_{n-1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    -1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    0
+\end{bmatrix}
+\]
+Problem zaczyna się z naprawą tego, aby macierz była dodatnio określona. Pierwszy sposób to sprawienie aby macierz była diagonalnie dominująca, to sprawi, że wszystkie wartości własne będą dodatnie, a więc macierz, będzie dodatnio określona, ale powiem szczerze, nie mam pomysłu jak to zrobić, aby nie zaburzyć symetryczności macierzy. Wiem, że aby nasza diagonala była dominująca, wystarczy tutaj wyzerować górną diagonalę, idąc od dołu, czyli zrobić back-substition, to zagwarantuje nam diagonalnie dominującą macierz, ale nie symetryczną . Więc na potrzeby, tego, aby zadanie móc w ogóle rozwiązać użyję tej wersji macierzy, która będzie dodatnio określona i diagonalnie dominująca, ale nie symetryczna, wygląda ona następująco:
+\[
+\begin{bmatrix}
+    1 & 0 & 0 & 0 & 0 & \dots & 0\\
+    -1 & h^{2}+2 & -1 & 0 & 0 & \dots & 0\\ 
+    0 & -1 & h^{2}+2 & -1 & 0 & \dots & 0\\
+    0 & 0 & -1 & h^{2}+2 & -1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & -1 & h^{2}+2 & -1\\
+    -1 & 0 & 0 & \hdots & 0 & -1 & 2
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{0}\\
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    \vdots\\
+    y_{n-1}\\
+    y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    0
+\end{bmatrix}
+\]
+Po odpowiednich przekstałceniach czyli dodaniu do drugiego i ostatniego wiersza wiersza pierwszego, możemy obciąć jeden wymiar macierzy i zostaniemy z taką postacią naszej początkowej macierzy:
+\[
+\begin{bmatrix}
+    h^{2}+2 & -1 & 0 & 0 & 0 & \dots & 0\\
+    -1 & h^{2}+2 & -1 & 0 & 0 & \dots & 0\\ 
+    0 & -1 & h^{2}+2 & -1 & 0 & \dots & 0\\
+    0 & 0 & -1 & h^{2}+2 & -1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & -1 & h^{2}+2 & -1\\
+    0 & 0 & 0 & \hdots & 0 & -1 & 2
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    y_{4}\\
+    \vdots\\
+    y_{n-1}\\
+    y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    1
+\end{bmatrix}
+\]
+Taka macierz posiada wszystkie potrzebne cechy, aby rozwiązać ją dowolną metodą podaną w poleceniu(również jak będzie to widoczne w następnym zadaniu, metodą gradientów sprzężonych). Trzeba również zaznaczyć, fakt, jak bardzo duży współczynnik uwarunkowania posiada ta macierz, przez co metody iteracyjne będą o wiele wolniej zbiegały, wiem, że można użyć tutaj tzw. preconditioning, ale nie wiem jak dobrać macierze, aby to działało, metodę tę zaimplementowałem w następnym zadaniu z gradientami sprzężonymi.
+\section{Użyta optymalizacja:}
+Aby uwzględnić, postać naszej macierzy, który jest trójdiagonalny, musiałem zrobić kilka optymalizacji. Po pierwsze metody implementowałem w ten sam sposób, w jaki Pan Profesor nam je podawał na kartcę, ale ze względu na postać macierzy mnożenie macierzy razy wektor, jest bardzo niewydajne, więc napisałem w programach własną funckję, która nie wykonuje nie potrzebnych mnożeń razy zero nazywa się TriDot. To pgwarantuje nam jak najlepszą ilość obliczeń. Również, aby zaoszczędzić pamięć, zamiast tworzyć całe wielkie tablice, które są w większości wypełnione zerami, używam, trzech wektorów i na nich robie obliczenia, które reprezentują poszczególne diagonale. Również, przy metodzie Gausa-Seidla, aby szybko rozwiązywać nasz układ, użyłem algorytmu Thomasa dla macierzy rzadkich i trójdiagionalnych, aby wszystko działało w czasie liniowym. Również w algorytmie OverRelaxation, uwzględniłem niepotrzebne mnożenia przez zera.
+\section{Wybór parametrów w metodzie OverRelaxation oraz Richardsona:}
+Dla obydwu tych metod udało mi się znaleźć wzory, które dyktują ile powinien wynośić optymalny parametr w każdej z tych metod. Dla OverRelaxation jest to odpowiendio:
+\begin{center}
+    $
+    \mu = maxWartoscWlasna(I - D^{-1}*A) \newline
+    \gamma = 1 + (\frac{\mu}{1+\sqrt[]{1-\mu^{2}}})^{2}
+    $
+\end{center}
+A dla Richardsona jest to odpowiednio:
+\begin{center}
+    $
+    \gamma = \frac{2}{\lambda_{min}+\lambda_{max}}
+    $
+\end{center}
+\section{Warunek stopu:}
+Warunek stopu jaki, użyłem wygląda następująco:
+\begin{center}
+    $
+    || x_{n+1} - x_{n} || < \epsilon
+    $    
+\end{center}
+Taki warunek, sprawia, że patrzymy bardziej globalnie na nasz wektor i bierzemy pod uwagę wszystkie wyniki, a nie tylko te częściowe jego wyniki.
+\section{Omówienie wyników:}
+Poniżej przedstawiam poszczególne wyniki jakie dał każdy z algorytmów:
+\begin{center}
+    Norma dla numpy: 9.95466104331637 \newline
+    Norma dla Gaus: 9.954660809463876 \newline
+    Liczba iteracji Gaus: 135156
+    \newline
+    \newline
+    Norma dla numpy: 9.95466104331637 \newline
+    Norma dla Jacobi: 9.954660712586886 \newline
+    Liczba iteracji Jacobi: 263994
+    \newline
+    \newline
+    Norma dla numpy: 9.95466104331637 \newline 
+    Norma dla Richardsona: 9.954660712588497 \newline
+    Liczba iteracji Richardson: 263994
+    \newline
+    \newline
+    Norma dla numpy: 9.95466104331637 \newline 
+    Norma dla OverRelaxation: 9.95466103797502 \newline
+    Liczba iteracji OverRelaxation: 3536
+\end{center}
+Jak widać najlepiej wypadła metoda iteracyjna OverRelaxation, dobrana z odpowiednim parametrem daję naprawdę szybką zbieżność.
+\end{document}
