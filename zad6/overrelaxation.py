@@ -73,4 +73,5 @@ gamma = 1 + ((mi)/(1 + np.sqrt(1 - (mi*mi))))*((mi)/(1 + np.sqrt(1-(mi*mi))))
 A = [a,b,c]
 
 #Iteracja
+print(gamma)
 OverRelaxation(A,d)

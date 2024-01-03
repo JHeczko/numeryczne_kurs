@@ -2,7 +2,7 @@ import numpy as np
 import numpy.linalg as lg
 
 #Parametry
-N_given = 10
+N_given = 500
 N = N_given - 2
 error = np.float64(1e-10)
 H = np.float64(1e-4)-2
@@ -10,6 +10,10 @@ H = np.float64(1e-4)-2
 #Make TriDiagonal matrix for numpy
 def TriDiag(a,b,c):
     return np.diag(a,-1) + np.diag(b,0) + np.diag(c,1)
+
+#Is positive define?
+def isPositiveDefined(x):
+    return np.all(np.linalg.eigvals(x) > 0)
 
 #Tridiagonal dot product
 def TriDot(A,b):
@@ -30,11 +34,12 @@ def isPositiveDefined(x):
 #Macierz A musi byc dodatnio okreslona
 def symetrycznieRozwiaz(matrixA, d, metoda):
     newA = np.matmul(matrixA, np.transpose(matrixA))
+    print(f"Is positive define: {isPositiveDefined(newA)}")
     y = metoda(newA,d)
     x = np.transpose(matrixA).dot(y)
     return x
 
-#Bez optymalizacji
+#Metoda Gradientow optymalizacja
 def gradientSprzerzony(A,b):
     xn = np.zeros(N)
     rn = b - A.dot(xn)
@@ -62,26 +67,17 @@ def giveMacierz():
     b = np.array([H for i in range(0,N)],np.float64)
     c = np.array([1 for i in range(0,N-1)])
     matrixA = TriDiag(a,b,c)
-    print(matrixA)
     for i in range(N-1,0,-1):
         matrixA[i-1]*=np.abs(matrixA[i][i])
-    #     print(matrixA[i-1])
-    #     print(matrixA[i])
-    #     print("+++++++++++++++")
         matrixA[i-1]+=matrixA[i]
-    #     print(matrixA[i-1])
-    #     print(matrixA[i])
-    #     print("-------------")
-    # print(matrixA*-1)
     return matrixA*-1
 
 #Macierz innit
 matrixA = giveMacierz()
 d = np.zeros(N,np.float64)
-d[0] = -1
-print(np.diag(matrixA,0))
+d[0] = -1*matrixA[1][1]
 
 #Rozwiazanie
-print(lg.norm(lg.solve(matrixA,d)))
-print(lg.norm(symetrycznieRozwiaz(matrixA,d,gradientSprzerzony)))
+print(f"Norm for numpy{lg.norm(lg.solve(matrixA,d))}")
+print(f"Norm for conquered gradients{lg.norm(symetrycznieRozwiaz(matrixA,d,gradientSprzerzony))}")
 print(f"Ilosc iteracji: {iteracje2}")

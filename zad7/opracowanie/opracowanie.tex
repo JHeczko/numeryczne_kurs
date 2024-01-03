@@ -11,7 +11,7 @@
 \begin{document}
 
 \section{Tutorial:}
-Na górze, programu są parametry, je również można swodobnie edytować. 
+Na górze, programu są parametry, je również można swodobnie edytować. Program dla macierzy z diagonalą 2.0001 jest w programie gradient.py, a dla naprawionej macierzy w programie gradient-naprawa.py
 \section{Omowienie problemów w zadaniu:}
 Więc tak jak w poprzednim zadaniu, nasza macierz nie jest ani symetryczna, ani dodatnio określona, a aby móc zastosować metodę gradientów sprzężonych to macierz musi te cechy posiadać. Tak jak poprzednio ma ona taką postać:
 \[
@@ -53,8 +53,8 @@ Będzie ona rozmiaru N+1 x N+1. Naprawa, braku symetryczności jest dosyć prost
     0 & 1 & h^{2}-2 & 1 & 0 & \dots & 0\\
     0 & 0 & 1 & h^{2}-2 & 1 &\dots & 0\\
     \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
-    0 & 0 & 0 & \hdots & 1 & h^{2} & 1\\
-    0 & 0 & 0 & \hdots & 0 & 1 & h^{2}
+    0 & 0 & 0 & \hdots & 1 & h^{2}-2 & 1\\
+    0 & 0 & 0 & \hdots & 0 & 1 & h^{2}-2
 \end{bmatrix}
 *
 \begin{bmatrix}
@@ -89,7 +89,7 @@ Problem zaczyna się z naprawą tego, aby macierz była dodatnio określona. Pie
     0 & 0 & 0 & \hdots & 0 & -1 & 1.9999
 \end{bmatrix}
 \]
-Nie przejmujemy się wierszem d, ponieważ zaczynamy od końca, czyli odejmujemy zera, za każdym razem jak dokonujemy przekstałcenia. Teraz wystarczy jakoś tę macierz rozwiązać, ale jak skoro nie jest symetryczna?? Tutaj z pomocą przychodzi nam pewna metoda zwaną CGNE
+Nie przejmujemy się wierszem d, ponieważ zaczynamy od końca, czyli odejmujemy zera, za każdym razem jak dokonujemy przekstałcenia, jeydnie co to w pierwszym wierszu musimy, uwzględnić mnożenie całego wiersza przez skalar. Teraz wystarczy jakoś tę macierz rozwiązać, ale jak skoro nie jest symetryczna?? Tutaj z pomocą przychodzi nam pewna metoda, która nazywa się CGNE
 \subsection{CGNE: }
 Jeśli mamy macierz, która jest dodatnio określona, to można w ogólności zsymetryzować równanie z macierzą A, które jest postaci $Ax=b$:
 \begin{center}
@@ -100,11 +100,21 @@ $
 \end{center}
 Coś takiego sprawi, że nasza macierz, będzie symetryczna, dodatnio określona i w dodatku trójdiagolna, bo mnożymy macierz dwugiagonalną dolną z dwudiagonalną górną, jedyny minus takiego podejścia, to bardzo wysoki, współczynnik uwarunkowania, który jest tak naprawde, składową macierzy z, której sklejamy macierz symetryczną, ogólnie macierz wejściowa już ma bardzo wysoki współczynnik, ale ta nowa ma jeszcze wyższy. Ale i to da się naprawić robiąc preconditioning, lecz nie za bardzo wiem, jak powinny wyglądać macierze diagonalne, aby wystarczająco bardzo było to wydajne. Zaimplementowałem, tę metodę, ale tak jak mówiłem, nie wiem jakie dobrać macierze.
 \section{Użyta optymalizacja:}
-Aby uwzględnić mnożenie przez zera, w metodzie, gradientów, użyłem mnożenia dla macierzy trójdiagonalnych, również zaoszczędziłem pamieć, zapisująć moją macierz w postaci trzech wektorów.
+Aby uwzględnić mnożenie przez zera, w metodzie, gradientów, użyłem mnożenia dla macierzy trójdiagonalnych, również zaoszczędziłem pamieć, zapisująć moją macierz w postaci trzech wektorów to zrobiłem dla tej macierzy zmodyfikowanej w poleceniu, dla mojej naprawionej macierzy, nie użyłem optymalizacji. W pliku gradient.py zaimplementowałem również preconditioning, ale nie wiem jak dobrać macierze, wiec poprostu zostawiam go jako coś gotowego do zrobienia.
 \section{Omówienie wyników:}
 Poniżej przedstawiam poszczególne wyniki jakie dał algorytm:
 \begin{center}
-
+    Tutaj dla macierzy zmienionej gdzie diagonala to 2.0001:\newline\newline
+    Norm of vector using numpy: 9.95466104331637\newline
+    Norm of vector using conqurence gradients: 9.954661043316126\newline
+    Ilosc iteracji: 998\newline
+    Norm of vector using conqurence gradients and preconditioning: 9.954661043316026\newline
+    Ilosc iteracji: 5306\newline\newline
+    Tutaj dla macierzy bazowej z elementami -1.9999 na diag:\newline\newline
+    Norm for numpy1.777717005534446\newline
+    Norm for conquered gradients1.7777099578245874\newline
+    Ilosc iteracji: 18583
+    
 \end{center}
-Jak widać, duży wspołczynnik uwarunkowania w znaczny sposób opóźnia dostanie rozwiązania.
+Jak widać, duży wspołczynnik uwarunkowania w znaczny sposób opóźnia dostanie rozwiązania. Pierwszy wynik jest rozwiazaniem dla tej macierz gdzie wartości diagonalne to 2.0001, a te drugie wyniki, są dla naprawionej macierzy. Szybkość zbiegania bardzo znacząco się różni. Plus jak widać preconditioning działa, ale dobór macierzy nie jest optymalny, więc pogarsza on szybkość uzyskania wyniku.
 \end{document}

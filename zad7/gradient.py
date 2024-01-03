@@ -4,7 +4,7 @@ import numpy.linalg as lg
 
 
 #Parametry
-N_given = 10
+N_given = 1000
 N = N_given - 1
 error = np.float64(1e-10)
 H = np.float64(1e-4)+2
