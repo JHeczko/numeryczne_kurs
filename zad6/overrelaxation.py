@@ -28,7 +28,7 @@ def TriDiag(a,b,c):
 #     return xn1
 
 #OverRelaxation 
-def OverRelaxation(A,d,xn):
+def OverRelaxationHelp(A,d,xn):
     xn1 = np.zeros(N)
     a = A[0]
     b = A[1]
@@ -42,6 +42,19 @@ def OverRelaxation(A,d,xn):
             sum2 += a[i-1]*xn[i]
         xn1[i-1] = (1-gamma)*xn[i-1]+(gamma/b[i-1])*(d[i-1] - sum1 - sum2)
     return xn1
+def OverRelaxation(A,d):
+    xn=np.zeros(N)
+    iteration = 0
+    while(True):
+        xn1 = OverRelaxationHelp(A,d,xn)
+        if(lg.norm(xn1-xn)< 1e-10):
+            print(f"Norma dla numpy: {lg.norm(lg.solve(TriDiag(a,b,c),d))}")
+            print(f"Norma dla OverRelaxation: {lg.norm(xn1)}")
+            print(f"Liczba iteracji OverRelaxation: {iteration}")
+            return xn1
+        else:
+            iteration += 1
+            xn = xn1
 
 #Init Symetryczna-Dodatnio Okreslona
 a = np.array([-1 for i in range(0,N-1)])
@@ -60,14 +73,4 @@ gamma = 1 + ((mi)/(1 + np.sqrt(1 - (mi*mi))))*((mi)/(1 + np.sqrt(1-(mi*mi))))
 A = [a,b,c]
 
 #Iteracja
-xn=np.zeros(N)
-while(True):
-    xn1 = OverRelaxation(A,d,xn)
-    if(lg.norm(xn1-xn)< 1e-10):
-        print(f"Norma dla numpy: {lg.norm(lg.solve(TriDiag(a,b,c),d))}")
-        print(f"Norma dla OverRelaxation: {lg.norm(xn1)}")
-        print(f"Liczba iteracji OverRelaxation: {iteration}")
-        break
-    else:
-        iteration += 1
-        xn = xn1
+OverRelaxation(A,d)

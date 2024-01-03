@@ -1,9 +1,11 @@
 import numpy as np
 import numpy.linalg as lg
 
+
+
 #Parametry
 N_given = 10
-N = N_given - 2
+N = N_given - 1
 error = np.float64(1e-10)
 H = np.float64(1e-4)+2
 
@@ -33,8 +35,6 @@ def preconditioningSolve(matrixA, matrixD1, matrixD2, d,method):
     solvedA = method(matrixAMod,matrixD1.dot(d))
     solvedATrue = matrixD2.dot(solvedA)
     return solvedATrue
-
-#Bez optymalizacji
 def gradientSprzerzony2(A,b):
     xn = np.zeros(N)
     rn = b - A.dot(xn)
@@ -88,7 +88,7 @@ d[0] = 1
 d[N-1] = 1
 matrixA = [a,b,c]
 
-#Polepszanie wspolczynika uwarunkowania naszej macierzy
+#Polepszanie wspolczynika uwarunkowania naszej macierzy, poprzez preconditioner solver
 D1 = np.array([(i+1) for i in range(0,N)])
 D2 = np.array([(i+1) for i in range(0,N)])
 matrixD1 = TriDiag(np.zeros(N-1),D1,np.zeros(N-1))

@@ -1,0 +1,110 @@
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+
+\graphicspath{ {./images} }
+
+\begin{document}
+
+\section{Tutorial:}
+Na górze, programu są parametry, je również można swodobnie edytować. 
+\section{Omowienie problemów w zadaniu:}
+Więc tak jak w poprzednim zadaniu, nasza macierz nie jest ani symetryczna, ani dodatnio określona, a aby móc zastosować metodę gradientów sprzężonych to macierz musi te cechy posiadać. Tak jak poprzednio ma ona taką postać:
+\[
+\begin{bmatrix}
+    1 & 0 & 0 & 0 & 0 & \dots & 0\\
+    1 & h^{2}-2 & 1 & 0 & 0 & \dots & 0\\ 
+    0 & 1 & h^{2}-2 & 1 & 0 & \dots & 0\\
+    0 & 0 & 1 & h^{2}-2 & 1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & 1 & h^{2}-2 & 1\\
+    0 & 0 & 0 & \hdots & 0 & 0 & 1
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{0}\\
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    \vdots\\
+    y_{n-1}\\
+    y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    0
+\end{bmatrix}
+\]
+Będzie ona rozmiaru N+1 x N+1. Naprawa, braku symetryczności jest dosyć prosta, bo wystarczy od przedostaniego i drugiego wiersza odjąć odpowiednio ostatni i pierwszy wiersz. Wtedy nasza macierz do rozwiązania będzie o dwa wymiary mniejsza i w dodatku symetryczna, te ucięte wiersze należy poprostu dodać na końcu do wyników, czyli na pierwszej i odpowiednio ostatnej pozycji wektora rozwiązań wstawić jedynkę i zero. Ale po przekształceniu dostaniemy taką macierz o wymiarach N-1 x N-1:
+\[
+\begin{bmatrix}
+    h^{2}-2 & 1 & 0 & 0 & 0 & \dots & 0\\
+    1 & h^{2}-2 & 1 & 0 & 0 & \dots & 0\\ 
+    0 & 1 & h^{2}-2 & 1 & 0 & \dots & 0\\
+    0 & 0 & 1 & h^{2}-2 & 1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & 1 & h^{2} & 1\\
+    0 & 0 & 0 & \hdots & 0 & 1 & h^{2}
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    y_{4}\\
+    \vdots\\
+    y_{n-2}\\
+    y_{n-1}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    -1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    0
+\end{bmatrix}
+\]
+Problem zaczyna się z naprawą tego, aby macierz była dodatnio określona. Pierwszy sposób to sprawienie aby macierz była diagonalnie dominująca, to sprawi, że wszystkie wartości własne będą dodatnie, a więc macierz, będzie dodatnio określona. Można więć w następujący sposób sprawić, aby była ona dodatnio określona. Taką macierz, mnożymy razy -1 i dostajemy, dodatnio określoną macierz, która wygląda tak: 
+\[
+\begin{bmatrix}
+    23.29424623 & 0 & 0 & 0 & 0 & \dots & 0\\
+    -22.56377853 & 22.93015889 & 0 & 0 & 0 & \dots & 0\\ 
+    0 & -22.1951418 & 22.56377853 & 0 & 0 & \dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & 3.99900006 & 0 & 0\\
+    0 & 0 & 0 & \hdots & -1.9999 & 2.99960001 & 0\\
+    0 & 0 & 0 & \hdots & 0 & -1 & 1.9999
+\end{bmatrix}
+\]
+Nie przejmujemy się wierszem d, ponieważ zaczynamy od końca, czyli odejmujemy zera, za każdym razem jak dokonujemy przekstałcenia. Teraz wystarczy jakoś tę macierz rozwiązać, ale jak skoro nie jest symetryczna?? Tutaj z pomocą przychodzi nam pewna metoda zwaną CGNE
+\subsection{CGNE: }
+Jeśli mamy macierz, która jest dodatnio określona, to można w ogólności zsymetryzować równanie z macierzą A, które jest postaci $Ax=b$:
+\begin{center}
+$
+AA^{T}y=b \newline
+x=A^{T}y
+$
+\end{center}
+Coś takiego sprawi, że nasza macierz, będzie symetryczna, dodatnio określona i w dodatku trójdiagolna, bo mnożymy macierz dwugiagonalną dolną z dwudiagonalną górną, jedyny minus takiego podejścia, to bardzo wysoki, współczynnik uwarunkowania, który jest tak naprawde, składową macierzy z, której sklejamy macierz symetryczną, ogólnie macierz wejściowa już ma bardzo wysoki współczynnik, ale ta nowa ma jeszcze wyższy. Ale i to da się naprawić robiąc preconditioning, lecz nie za bardzo wiem, jak powinny wyglądać macierze diagonalne, aby wystarczająco bardzo było to wydajne. Zaimplementowałem, tę metodę, ale tak jak mówiłem, nie wiem jakie dobrać macierze.
+\section{Użyta optymalizacja:}
+Aby uwzględnić mnożenie przez zera, w metodzie, gradientów, użyłem mnożenia dla macierzy trójdiagonalnych, również zaoszczędziłem pamieć, zapisująć moją macierz w postaci trzech wektorów.
+\section{Omówienie wyników:}
+Poniżej przedstawiam poszczególne wyniki jakie dał algorytm:
+\begin{center}
+
+\end{center}
+Jak widać, duży wspołczynnik uwarunkowania w znaczny sposób opóźnia dostanie rozwiązania.
+\end{document}
