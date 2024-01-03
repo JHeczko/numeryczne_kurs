@@ -77,7 +77,7 @@ Będzie ona rozmiaru N+1 x N+1. Naprawa, braku symetryczności jest dosyć prost
     0
 \end{bmatrix}
 \]
-Problem zaczyna się z naprawą tego, aby macierz była dodatnio określona. Pierwszy sposób to sprawienie aby macierz była diagonalnie dominująca, to sprawi, że wszystkie wartości własne będą dodatnie, a więc macierz, będzie dodatnio określona. Można więć w następujący sposób sprawić, aby była ona dodatnio określona. Taką macierz, mnożymy razy -1 i dostajemy, dodatnio określoną macierz, która wygląda tak: 
+Problem zaczyna się z naprawą tego, aby macierz była dodatnio określona. Pierwszy sposób to sprawienie aby macierz była diagonalnie dominująca, to sprawi, że wszystkie wartości własne będą dodatnie, a więc macierz, będzie dodatnio określona. Można więć w następujący sposób sprawić, aby była ona dodatnio określona. Taką macierz, mnożymy razy -1 i dostajemy, dodatnio określoną macierz oraz diagonalnie dominująca, która wygląda tak: 
 \[
 \begin{bmatrix}
     23.29424623 & 0 & 0 & 0 & 0 & \dots & 0\\
@@ -99,8 +99,73 @@ x=A^{T}y
 $
 \end{center}
 Coś takiego sprawi, że nasza macierz, będzie symetryczna, dodatnio określona i w dodatku trójdiagolna, bo mnożymy macierz dwugiagonalną dolną z dwudiagonalną górną, jedyny minus takiego podejścia, to bardzo wysoki, współczynnik uwarunkowania, który jest tak naprawde, składową macierzy z, której sklejamy macierz symetryczną, ogólnie macierz wejściowa już ma bardzo wysoki współczynnik, ale ta nowa ma jeszcze wyższy. Ale i to da się naprawić robiąc preconditioning, lecz nie za bardzo wiem, jak powinny wyglądać macierze diagonalne, aby wystarczająco bardzo było to wydajne. Zaimplementowałem, tę metodę, ale tak jak mówiłem, nie wiem jakie dobrać macierze.
+\subsection{Zmnieniona macierz:}
+Co prawda rozwiązałem również układ dla tej zmodyfikowanej macierzy i wygląda on następująco:
+\[
+\begin{bmatrix}
+    1 & 0 & 0 & 0 & 0 & \dots & 0\\
+    -1 & h^{2}+2 & -1 & 0 & 0 & \dots & 0\\ 
+    0 & -1 & h^{2}+2 & -1 & 0 & \dots & 0\\
+    0 & 0 & -1 & h^{2}+2 & -1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & -1 & h^{2}+2 & -1\\
+    -1 & 0 & 0 & \hdots & 0 & -1 & 2
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{0}\\
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    \vdots\\
+    y_{n-1}\\
+    y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    0
+\end{bmatrix}
+\]
+Wystarczy tutaj dodać wiersz pierwszy do wiersza ostatniego i drugiego i dostajemy taką postać z której możemy uciąć, odpowiednio jeden wymiar macierzy, po raz kolejny w obliczeniach, nie będę uwzględniał tego, że pierwsze rozwiązanie to 1: 
+\[
+\begin{bmatrix}
+    h^{2}+2 & -1 & 0 & 0 & 0 & \dots & 0\\
+    -1 & h^{2}+2 & -1 & 0 & 0 & \dots & 0\\ 
+    0 & -1 & h^{2}+2 & -1 & 0 & \dots & 0\\
+    0 & 0 & -1 & h^{2}+2 & -1 &\dots & 0\\
+    \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
+    0 & 0 & 0 & \hdots & -1 & h^{2}+2 & -1\\
+    0 & 0 & 0 & \hdots & 0 & -1 & 2
+\end{bmatrix}
+*
+\begin{bmatrix}
+    y_{1}\\
+    y_{2}\\
+    y_{3}\\
+    y_{4}\\
+    \vdots\\
+    y_{n-1}\\
+    y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1\\
+    0\\
+    0\\
+    0\\
+    \vdots\\
+    0\\
+    1
+\end{bmatrix}
+\]
 \section{Użyta optymalizacja:}
-Aby uwzględnić mnożenie przez zera, w metodzie, gradientów, użyłem mnożenia dla macierzy trójdiagonalnych, również zaoszczędziłem pamieć, zapisująć moją macierz w postaci trzech wektorów to zrobiłem dla tej macierzy zmodyfikowanej w poleceniu, dla mojej naprawionej macierzy, nie użyłem optymalizacji. W pliku gradient.py zaimplementowałem również preconditioning, ale nie wiem jak dobrać macierze, wiec poprostu zostawiam go jako coś gotowego do zrobienia.
+Aby uwzględnić mnożenie przez zera, w metodzie, gradientów, użyłem mnożenia dla macierzy trójdiagonalnych, również zaoszczędziłem pamieć, zapisująć moją macierz w postaci trzech wektorów to zrobiłem dla tej macierzy zmodyfikowanej w poleceniu, dla mojej naprawionej macierzy, nie użyłem optymalizacji. W pliku gradient.py zaimplementowałem również preconditioning, ale nie wiem jak dobrać macierze, wiec poprostu zostawiam go jako coś zaimplementowanego.
 \section{Omówienie wyników:}
 Poniżej przedstawiam poszczególne wyniki jakie dał algorytm:
 \begin{center}
