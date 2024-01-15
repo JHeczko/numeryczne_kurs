@@ -8,7 +8,14 @@
 
 \graphicspath{ {./images} }
 
+
 \begin{document}
+
+\title{{\Large}Zadanie numeryczne 7}
+\date{}
+\author{Jakub Heczko}
+
+\maketitle
 
 \section{Tutorial:}
 Na górze, programu są parametry, je również można swodobnie edytować. Program dla macierzy z diagonalą 2.0001 jest w programie gradient.py, a dla naprawionej macierzy w programie gradient-naprawa.py
@@ -181,5 +188,5 @@ Poniżej przedstawiam poszczególne wyniki jakie dał algorytm:
     Ilosc iteracji: 18583
     
 \end{center}
-Jak widać, duży wspołczynnik uwarunkowania w znaczny sposób opóźnia dostanie rozwiązania. Pierwszy wynik jest rozwiazaniem dla tej macierz gdzie wartości diagonalne to 2.0001, a te drugie wyniki, są dla naprawionej macierzy. Szybkość zbiegania bardzo znacząco się różni. Plus jak widać preconditioning działa, ale dobór macierzy nie jest optymalny, więc pogarsza on szybkość uzyskania wyniku.
+Jak widać, duży wspołczynnik uwarunkowania w znaczny sposób opóźnia dostanie rozwiązania. Pierwszy wynik jest rozwiazaniem dla tej macierz gdzie wartości diagonalne to 2.0001, a te drugie wyniki, są dla naprawionej macierzy. Szybkość zbiegania bardzo znacząco się różni. Plus jak widać preconditioning działa, ale dobór macierzy nie jest optymalny, więc pogarsza on szybkość uzyskania wyniku. Trzeba zaznaczyć, że metoda gradientów jest czuła na to jak wysoki jest współczynnik uwarunkowania macierzy, którą rozwiązujemy.
 \end{document}

@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+
+\graphicspath{ {./images} }
+
+
+\begin{document}
+
+\section{Omówienie zadania:}
+Była zadana symetryczna macierz, należało znależć jej wartości własne z dokładnościa do ${10^{-8}}$. Należało to zrobić trzema róznymi algorytmami: pierwszy z nich to metoda potęgowa, następny to metoda RQI, a trzecią opcją był algorytm QR. Pokrótce postaram się omówić każdy z nich.
+\section{Metoda potęgowa:}
+Tak jak omawialiśmy na ćwiczeniach, jeżeli zaczniemy sobie mnożyć wektor, który możemy rozpisać za pomocą wzoru na kombinację liniową. Zobaczymy następującą zależność:
+\begin{center}
+\begin{math}
+    A\vec{v} = \sum_{i=1}^{N}\beta_{i}\vec{e_{i}}A =^{(1)} \sum_{i=1}^{N}\beta_{i}\vec{e_{i}}\lambda
+\end{math}
+\end{center}
+Gdzie e to wektor własny, który należy do bazy macierzy A, który jak widać będzie za każdym razem skalowany razy odpowiadającą mu wartośc własną. Ponieważ wiemy, że nasz wektor v, będzie budowany za pomocą ortonormalnych wektorów normalnych, to można zrobić przejście numer (1), bo z równania charakterystyczne wiemy, że $A\vec{v} =\lambda \vec{v}$. To po wielu iteracjach sprawi, że nasza wartość własna będzie znacznie większa od reszty współczynników, spójrzmy:
+\begin{center}
+    \begin{math}
+        A\vec{v} = \sum_{i=1}^{N}\beta_{i}\vec{e_{i}}\lambda \newline
+        A^{2}\vec{v} = \sum_{i=1}^{N}\beta_{i}\vec{e_{i}}\lambda^{2} \newline
+        A^{3}\vec{v} = \sum_{i=1}^{N}\beta_{i}\vec{e_{i}}\lambda^{3} \newline
+        ..............\newline
+        A^{n}\vec{v} = \sum_{i=1}^{N}\beta_{i}\vec{e_{i}}\lambda^{n} \newline
+    \end{math}
+\end{center}
+Jak widać, przy n powtórzeniu, ta wartość własna, będzie naprawdę znacznie dominować w porównaniu do reszty współczynników. Więc nasza wartość własna to będzie $\lambda_{max} = \frac{|\vec{v}_{k}|}{|\vec{v_{k-1}}|}$ gdzie $\vec{v_{k-1}}$ to wektor który został obliczony w w poprzedniej iteracji, a $\vec{v_{k} = A\vec{v_{k-1}}}$. Jak widać, coś takiego zagwarantuje nam dostanie najwiekszej co na moduł wartości własnej. I tutaj właśnie jest problem, że dostaniemy, ją na moduł dużą, co oznacza, że znak wartości własnej, będzie możliwie nieprawidłowy. Ale jest sposób na to, aby rozpoznać, jaki mamy znak, wystarczy wykonać, kilka więcej iteracji, po osiągnięciu stabilizacji wektora własnego (wtedy kiedy udaje nam się dostać stabilny wynik co każdą iterację).  Jeśli znak składowych w nastepnych iteracjach, będzie się zmieniał, to wiemy, że znak jest ujemny, jeśli nic nie będzie się dziać, to mamy do czynienia z dodatnią wartością. Istotnie również zbieżność tej metody zależeć, będzie od tego jak bardzo największa wartość własna będzie dominować na moduł od innych wartości, jeśli będzie ona bardzo zbliżona do pozostałych wartości własnych, będziemy mieli bardzo wolną zbieżność np: $\lambda_{1} = 2$ $\lambda_{2} = 1.99999999...$ przy takich wartościach zbieżność, będzie bardzo wolna. Również trzeba poruszyć temat znajdywania pozostałych wektorów własnych. Aby to zrobić trzeba, po znalezieniu naszego pierwszego wektora własnego, robić kolejne iteracje, ale tym razem dla wektorów, które są prostopadłe do wektora $\vec{e_{1}}$, który jest wektorem własnym, który na początku znaleźliśmy. Żeby ta wartość własna dominuąca znikneła, należy sprawić, aby $\beta_{1} = 0$ wtedy następnym dominuącym wektorem własnym oraz wartością będzie, odpowiednio $\vec{e_{2}}$ oraz $\lambda_{2}$. Aby móc tak postępować należy, wzbogacić nasz algorytm o dodatkowy krok, ortogonalizacji naszego wektora, który wyliczamy, więc robimy coś takiego(przy założeniach, tak jak poprzednio, że $|y_{1} = 1$ oraz $e_{1}^{T}y_{1} = 0$):
+\begin{center}
+    \begin{math}
+        Ay_{k} = z_{k} \newline
+        z_{k} = z_{k} - (e_{1}^{T}z_{k})*e_{1} \newline
+        y_{k+1} = \frac{z_{k}}{|z_{k}|} \newline
+    \end{math}
+\end{center}
+\section{Algorytm QR:}
+Alorytm wygląda następująca:
+\begin{center}
+    \begin{math}
+        B^{0} = A \newline
+        Q^{n}R^{n} = B^{n}
+        B^{n+1} = R^{n}Q^{n}
+    \end{math}
+\end{center}
+Coś takiego, będzie pomału zbiegało nam ku macierzy trójkątniej górnej, która będzie posiadała wszystkie wartości własne na diagonali(na to jest twierdzenie). Ale problem, jest z tym, że nie mamy wektorów własnych. Można je dostać za pomocą tak zwanej ortogonalnej transformacji prawdopodobieństwa, która skumuluwana do kilku kroków da nam macierz P, która będzie miała wektory własne jako poszczególne kolumny. Każdy krok takiej transformacji wygląda następująco:
+\begin{center}
+    \begin{math}
+        P_{0} = \mathbf{I} \newline
+        P_{1} = P_{0}*Q_{1} \newline
+        P_{2} = P_{1}*Q_{2} \newline
+        P_{3} = P_{2}*Q_{3} \newline
+        .........\newline
+        P_{n} = P_{n-1}*Q_{n}
+    \end{math}
+\end{center}
+Gdzie $P_{0}$, to inicjalizacja macierzy P, a $Q_{n}$ to macierz ortogonalna biorąca się z poszczególnej iteracji, która otrzymujemy z rozkładu QR macierzy A.
+\section{Algorytm RQI(Rayleigh Quotient Iteration):} 
+Teraz przyjrzyjmy się bliżej RQI, czyli ulepszonej wersji, algorytmu odwrotnej metody potęgowej.
+\end{document}

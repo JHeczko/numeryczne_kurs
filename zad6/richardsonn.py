@@ -4,7 +4,7 @@ import numpy.linalg as lg
 import time as time
 
 #Parameters
-N_given = 1000
+N_given = 100
 N = N_given - 1 
 H = np.float64(1e-4)+2
 gamma = 1/2

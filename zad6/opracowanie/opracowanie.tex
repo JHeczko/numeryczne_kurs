@@ -8,7 +8,14 @@
 
 \graphicspath{ {./images} }
 
+
 \begin{document}
+
+\title{{\Large}Zadanie numeryczne 6}
+\date{}
+\author{Jakub Heczko}
+
+\maketitle
 
 \section{Tutorial:}
 Na górze, każdego programu, są parametry, takie jak błąd, który można ustawić, albo wielkośc macierzy (Ngiven) oraz możemy wybrać parametry dla metody Richardsona oraz OverRelaxation. 
@@ -53,8 +60,8 @@ Będzie ona rozmiaru N+1 x N+1. Naprawa, braku symetryczności jest dosyć prost
     0 & 1 & h^{2}-2 & 1 & 0 & \dots & 0\\
     0 & 0 & 1 & h^{2}-2 & 1 &\dots & 0\\
     \vdots & \vdots & \vdots & \ddots & \ddots & \ddots & \vdots\\
-    0 & 0 & 0 & \hdots & 1 & h^{2} & 1\\
-    0 & 0 & 0 & \hdots & 0 & 1 & h^{2}
+    0 & 0 & 0 & \hdots & 1 & h^{2}-2 & 1\\
+    0 & 0 & 0 & \hdots & 0 & 1 & h^{2}-2
 \end{bmatrix}
 *
 \begin{bmatrix}

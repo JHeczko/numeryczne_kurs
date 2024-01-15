@@ -3,7 +3,7 @@ import numpy.linalg as lg
 import time as time
 
 #Parameters
-N_given = 1000
+N_given = 100
 N = N_given - 1 #Bo mamy juz dwa pierwsze rozwiazania!!!
 H = np.float64(1e-4)+2
 error = 1e-10
