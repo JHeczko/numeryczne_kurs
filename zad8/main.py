@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.linalg as lg
+import scipy
 import time
 
 N=3
@@ -13,6 +14,7 @@ def getColumn(A,column):
 def rqi(macierzA):
     e = [np.zeros(N),np.zeros(N),np.zeros(N)]
     values = [0,0,0]
+    iteration = 0
     for i in range(0,N):
         n = macierzA.shape[0]
         lambda_val = 0
@@ -20,6 +22,7 @@ def rqi(macierzA):
         #Inicjalizacja wektora losowego o dlugości 1
         x_poprzednie = np.random.rand(n)
         x_poprzednie /= np.linalg.norm(x_poprzednie)
+
         while(True):
             # Obliczanie wartości własnej przy użyciu ilorazu Rayleigh
             lambda_val = (x_poprzednie @ macierzA @ x_poprzednie) / (x_poprzednie @ x_poprzednie)
@@ -44,6 +47,8 @@ def rqi(macierzA):
             lambda_val_previous = lambda_val
             e[i] = x
             x_poprzednie = x
+
+            iteration += 1
     
     return e, values
 
@@ -60,10 +65,13 @@ def potegowa(macierzA):
     tabWartosciWlasnychA = np.zeros(N)
 
     for i in range(0,N):
+        vk = np.zeros(N)
+        wk = np.zeros(N)
         v_poprzednie = np.zeros(N)
         v_poprzednie[0] = 1
         wartoscWlasnaA = 0
         iteration = 0
+
         while(True):
             wartoscWlasnaA_poprzednia = wartoscWlasnaA
 

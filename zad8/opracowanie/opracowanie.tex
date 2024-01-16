@@ -8,8 +8,17 @@
 
 \graphicspath{ {./images} }
 
+\title{{\Large}Zadanie numeryczne 7}
+\date{}
+\author{Jakub Heczko}
 
 \begin{document}
+
+\title{{\Large}Zadanie numeryczne 8}
+\date{}
+\author{Jakub Heczko}
+
+\maketitle
 
 \section{Omówienie zadania:}
 Była zadana symetryczna macierz, należało znależć jej wartości własne z dokładnościa do ${10^{-8}}$. Należało to zrobić trzema róznymi algorytmami: pierwszy z nich to metoda potęgowa, następny to metoda RQI, a trzecią opcją był algorytm QR. Pokrótce postaram się omówić każdy z nich.
@@ -60,5 +69,13 @@ Coś takiego, będzie pomału zbiegało nam ku macierzy trójkątniej górnej, k
 \end{center}
 Gdzie $P_{0}$, to inicjalizacja macierzy P, a $Q_{n}$ to macierz ortogonalna biorąca się z poszczególnej iteracji, która otrzymujemy z rozkładu QR macierzy A.
 \section{Algorytm RQI(Rayleigh Quotient Iteration):} 
-Teraz przyjrzyjmy się bliżej RQI, czyli ulepszonej wersji, algorytmu odwrotnej metody potęgowej.
+Teraz przyjrzyjmy się bliżej RQI, czyli ulepszonej wersji, algorytmu rezolwenty. Algorytm rezolwenty szuka nam wartości własnej, która jest bliska jakieś dobranej wartości "a". Algorytm RQI, jest zmodyfikowanym algorytmem rezolwenty, ponieważ co kazdą iterację aktualizuje on naszą wartość a, o poprzednio znalezioną wartość własną. Na ćwiczeniach pokazywaliśmy jak to zrobić z parametrem $\delta$, ale znalazłem jak to zrobić przy pomocy tzw. ilorazu Rayleigh. Który wygląda następująco, jest on napisany w pierwszej linice, w drugiej, jest krok, który znajduje się w algorytmie rezolwenty, czyli rozwiązywanie układu równań, po uwczesnym odjęciu macierzy jednostkowej z poprzednią wyliczonym przybliżeniem wartości własnej:
+\begin{center}
+    \begin{math}
+        \lambda_{k} = \frac{x_{k-1}^{T}Ax_{k-1}}{x_{k-1}^{T}x_{k-1}} \newline
+        x_{k} = (A-\lambda_{k}*\mathbf{I})^{-1}x_{k-1} 
+    \end{math}
+\end{center}
+Następnie postępujemy tak samo jak w metodzie potęgowej, normujemy wektor, jeśli musimy ortogonalizujemy, żeby wyliczyć następne wartości własne.
+
 \end{document}
