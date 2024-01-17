@@ -13,7 +13,6 @@ def sprawdzenie(x1, x2):
     else:
         return False
 
-
 def funkcja(x):
     return -x*x*x + 12*x*x - 46*x + 56
 
@@ -38,16 +37,20 @@ def bisekcja(f):
                 miejsca_zerowe[i] = x2
                 break
             iteration += 1
-    print(iteration)
+    print("Bisekcja iteracje: ",iteration)
     return miejsca_zerowe
 
 def falsi(f):
     iteration = 0
     miejsca_zerowe = [0,0,0]
+    x1_poprzednie = 0
+    x2_poprzednie = 0
     for i in range(0,3):
         x1 = przedzialy[i][0]
         x2 = przedzialy[i][1]
         while(True):
+            x1_poprzednie = x1
+            x2_poprzednie = x2
             x3 = (f(x1)*x2 - f(x2)*x1) / (f(x1) - f(x2))
             if(f(x3)*f(x2) < 0):
                 x1 = x3
@@ -56,14 +59,13 @@ def falsi(f):
                 x1 = x1
                 x2 = x3
             if(f(x3) == 0):
-                print("bo zero")
                 miejsca_zerowe[i] = x3
                 break
-            if(sprawdzenie(x2,x1)):
+            if(sprawdzenie(x2,x2_poprzednie) & sprawdzenie(x1, x1_poprzednie)):
                 miejsca_zerowe[i] = x2
                 break
             iteration += 1
-    print(iteration)
+    print("Falsi iteracje: ",iteration)
     return miejsca_zerowe
 
 def siecznych(f):
@@ -80,9 +82,11 @@ def siecznych(f):
                 miejsca_zerowe[i] = x2
                 break
             iteration += 1
-    print(iteration)
+    print("Sieczne iteracje: ",iteration)
     return miejsca_zerowe
 
-print("Bisekcja:",bisekcja(funkcja))
-print("Falsi: ",falsi(funkcja))
-print("Siecznych: ",siecznych(funkcja))
+
+if __name__ == "__main__":
+    print("Bisekcja:",bisekcja(funkcja))
+    print("Falsi: ",falsi(funkcja))
+    print("Siecznych: ",siecznych(funkcja))

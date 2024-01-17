@@ -1,6 +1,3 @@
-from math import cos
-import matplotlib
-import scipy
 import numpy as np
 import numpy.linalg as lg
 import matplotlib.pyplot as plt
@@ -81,7 +78,7 @@ def TDMA(a,b,c,d):
         x[i] = gamma[i] + beta[i]*x[i+1]
     return x
 
-def potegowa(a,b,c):
+def potegowa_odwrotna(a,b,c):
     e = [np.zeros(N),np.zeros(N),np.zeros(N),np.zeros(N)]
     vk = np.zeros(N)
     wk = np.zeros(N)
@@ -92,18 +89,77 @@ def potegowa(a,b,c):
 
     tabWartosciWlasnychA = np.zeros(4)
 
+    iteration = 0
     for i in range(0,4):
         wartoscWlasnaA = 0
         wartoscWlasnaA_poprzednia = 0
-        v_poprzednie = v_poprzednie = np.random.rand(N)
+        v_poprzednie = np.random.rand(N)
         v_poprzednie/=lg.norm(v_poprzednie)
         vk = np.zeros(N)
         wk = np.zeros(N)
 
-        global iteration
-        iteration = 0
         while(True):
             wartoscWlasnaA_poprzednia = wartoscWlasnaA
+
+            wk = TDMA(a,b,c, v_poprzednie)
+
+            vk = wk/lg.norm(wk)
+
+            wartoscWlasnaA = (lg.norm(wk)/lg.norm(v_poprzednie))
+
+            help = np.zeros(N)
+            for j in range(0, i):
+                iloczyn = e[j].dot(vk)
+                help += e[j]*iloczyn
+            vk -= help
+            v_poprzednie = vk
+            # print("-------------")
+            # print(f"WLASNE WEKT: {e[0]}")
+            # print(f"LAMBDA: {tabWartosciWlasnychA[0]}")
+
+            if(np.abs(wartoscWlasnaA - wartoscWlasnaA_poprzednia) < 1e-14):
+                tabWartosciWlasnychA[i] = 1/wartoscWlasnaA
+                e[i] = v_poprzednie
+                break
+
+            tabWartosciWlasnychA[i] = wartoscWlasnaA
+            e[i] = v_poprzednie
+
+            iteration += 1
+    print(iteration)
+    return e,tabWartosciWlasnychA
+
+def potegowa_odwrotna2(a,b,c):
+    e = [np.zeros(N),np.zeros(N),np.zeros(N),np.zeros(N)]
+    vk = np.zeros(N)
+    wk = np.zeros(N)
+
+    v_poprzednie = np.zeros(N)
+    v_poprzednie_poprzednie = np.zeros(N)
+
+    wartoscWlasnaA = 0
+    wartoscWlasnaA_poprzednia = 0
+    wartoscWlasnaA_poprzednia_poprzednia = 0
+
+    tabWartosciWlasnychA = np.zeros(4)
+
+    iteration = 0
+
+    for i in range(0,4):
+        wartoscWlasnaA = 0
+        wartoscWlasnaA_poprzednia = 3
+        wartoscWlasnaA_poprzednia_poprzednia = 7
+        v_poprzednie = np.random.rand(N)
+        v_poprzednie/=lg.norm(v_poprzednie)
+        v_poprzednie_poprzednie = np.zeros(N)
+        vk = np.zeros(N)
+        wk = np.zeros(N)
+
+        while(True):
+            wartoscWlasnaA_poprzednia_poprzednia = wartoscWlasnaA_poprzednia
+            wartoscWlasnaA_poprzednia = wartoscWlasnaA
+
+
 
             wk = TDMA(a,b,c, v_poprzednie)
 
@@ -122,29 +178,32 @@ def potegowa(a,b,c):
             # print(f"WLASNE WEKT: {e[0]}")
             # print(f"LAMBDA: {tabWartosciWlasnychA[0]}")
 
-            if(np.abs(wartoscWlasnaA - wartoscWlasnaA_poprzednia) < 1e-8):
+            q = np.abs(wartoscWlasnaA_poprzednia - wartoscWlasnaA) / np.abs(wartoscWlasnaA_poprzednia_poprzednia - wartoscWlasnaA_poprzednia)
+            if(q*np.abs(wartoscWlasnaA - wartoscWlasnaA_poprzednia)/(q-1) < 1e-14):
                 tabWartosciWlasnychA[i] = 1/wartoscWlasnaA
-                e[i] = -1*v_poprzednie
+                e[i] = v_poprzednie
                 break
 
             tabWartosciWlasnychA[i] = wartoscWlasnaA
             e[i] = v_poprzednie
 
             iteration += 1
+    print(iteration)
     return e,tabWartosciWlasnychA
 
 #Init gdzie A[0] = downDiag; A[1] = diag; A[2] = upDiag 
-x_zmienna = lambda n : -L+(n*h)
+def x_zmienna(n): return -L+(n*h)
+
 a = np.array([-1/(h*h) for i in range(0,Macierz_Rozmiar-1)])
-b = np.array([(2/(h*h)) + 4 - (6/(cos(h*h*x_zmienna(i+1)))) for i in range(0,Macierz_Rozmiar)])
+b = np.array([(2/(h*h)) + 4 - (6/(np.cos(x_zmienna(i+1))**2)) for i in range(0,Macierz_Rozmiar)])
 c = np.array([-1/(h*h) for i in range(0,Macierz_Rozmiar-1)])
 
 values_true, vectors_true = lg.eig(tridiag(a,b,c))
-vectors, values = potegowa(a,b,c)
+vectors, values = potegowa_odwrotna(a,b,c)
 
-print(lg.eig(tridiag(a,b,c)).eigenvectors)
+print(vectors_true)
 print(vectors)
 
-plot1(vectors,"cos0")
-plot1(vectors_true,"cos3_true")
+plot1(vectors,"cosh")
+plot1(vectors_true,"cosh_true")
 
