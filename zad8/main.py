@@ -1,7 +1,5 @@
 import numpy as np
 import numpy.linalg as lg
-import scipy
-import time
 
 N=3
 
