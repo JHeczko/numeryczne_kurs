@@ -33,6 +33,20 @@ Również znany twierdzienie, że jeśli macierz A ma jakieś wartości własne,
     \end{math}
     \end{center}
 Pierwszy (1) krok wynika z tego, że nasza macierz jest mnożona razy wektor własny $\vec{e_{n}}$, więc dostaniemy naszą wartość własna. Ponieważ w metodzie potęgowej, normalnie dostalibyśmy najwiekszą na moduł wartość własną, to iż tutaj działamy na odwrotnościach to dostaniemy odwrotnośc najmniejszej wartości własnej, bo jak obrócimy najwiekszą wartość własną to stanie się ona najmniejszą wartościa naszej obróconej macierzy A, a skoro metoda potęgowa szuka największej wartości, to po kilku iteracjach wyskoczy nam wartość, która jest najmniejsza w mianowniku, czyli najwieksza, ze wszystkich odwrotności, czyli najmniejsza ze wszystkich wartości macierzy A. Standardowo, tak jak w metodzie potęgowej, należy użyć metody deflacji, aby móc szukać następnych wektorów własnych i wartości własnych, oczywiście po uwczesnym znalezeniu, pierwszej wartości, następnej drugiej wartości i tak dalej. Jest to ortogonalizacja szukanych wektorów do naszego uwcześniej znalezionego wektora.
+\section{Warunek stopu: }
+Użyłem najbardziej naiwnej metody stopu czyli:
+\begin{center}
+    \begin{math}
+        ||\lambda_{n-1} - \lambda_{n}|| < \epsilon
+    \end{math}
+    \end{center}
+Chciałem użyć tego co robiliśmy na ćwiczeniach, ale coś mi nie działa w każdym razie chodziło o wzór:
+\begin{center}
+    \begin{math}
+        |q|\frac{|\lambda_{n}-\lambda_{n-1}|}{|q|-1} < \epsilon
+    \end{math}
+    \end{center}
+Jest on zaimplementowany w tym samym pliku, ale w funkcji potegowa-odwrotna2.
 \section{Wyniki algorytmu: }
 Omówie, może najpierw co wpływa na szybkość zbiegu, nie pamiętam czy mówiliśmy to na ćwiczeniach( nic nie zapisałem w zeszycie na ten temat niestety), ale wybór wektora $v_{k-1}$ ma znaczenie, jak można zobaczyć, przy każdym nowym uruchomieniu, programu nasza zbieżność jest inna. Do tego zbieżnośc tak jak mówiłem zależy od tego czy w widmie naszej macierzy, nie mamy zbliżonych do siebie wartości. Ogólnie dla tej macierzy będziemy mieli bardzo wolną zbieżnośc .To teraz graficzne przedstawienie wyników:
 \subsection*{Tutaj dla naszej funkcji odwrotnej potęgowej: }
